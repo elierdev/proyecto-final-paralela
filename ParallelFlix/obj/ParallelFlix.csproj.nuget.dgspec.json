@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Mankiito\\Desktop\\proyecto-final-paralela\\ParallelFlix\\ParallelFlix.csproj": {}
+    "C:\\Users\\Mankiito\\Desktop\\FinalDefinitivo\\proyecto-final-paralela\\ParallelFlix\\ParallelFlix.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Mankiito\\Desktop\\proyecto-final-paralela\\ParallelFlix\\ParallelFlix.csproj": {
+    "C:\\Users\\Mankiito\\Desktop\\FinalDefinitivo\\proyecto-final-paralela\\ParallelFlix\\ParallelFlix.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Mankiito\\Desktop\\proyecto-final-paralela\\ParallelFlix\\ParallelFlix.csproj",
+        "projectUniqueName": "C:\\Users\\Mankiito\\Desktop\\FinalDefinitivo\\proyecto-final-paralela\\ParallelFlix\\ParallelFlix.csproj",
         "projectName": "ParallelFlix",
-        "projectPath": "C:\\Users\\Mankiito\\Desktop\\proyecto-final-paralela\\ParallelFlix\\ParallelFlix.csproj",
+        "projectPath": "C:\\Users\\Mankiito\\Desktop\\FinalDefinitivo\\proyecto-final-paralela\\ParallelFlix\\ParallelFlix.csproj",
         "packagesPath": "C:\\Users\\Mankiito\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Mankiito\\Desktop\\proyecto-final-paralela\\ParallelFlix\\obj\\",
+        "outputPath": "C:\\Users\\Mankiito\\Desktop\\FinalDefinitivo\\proyecto-final-paralela\\ParallelFlix\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

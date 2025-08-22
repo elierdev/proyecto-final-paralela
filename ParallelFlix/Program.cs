@@ -7,6 +7,7 @@ using NetflixRecommendationSystem.Database;
 using NetflixRecommendationSystem.Models;
 using NetflixRecommendationSystem.Recommender;
 using NetflixRecommendationSystem.UI;
+using NetflixRecommendationSystem.Performance;
 
 namespace NetflixRecommendationSystem
 {
@@ -64,13 +65,27 @@ namespace NetflixRecommendationSystem
                     _ui.ShowWelcome();
                     var selectedMovies = _ui.SelectMovies(_allMovies);
                     
-                    // Actualizar preferencias del usuario
-                    _currentUser.SelectedMovies = selectedMovies;
-                    _currentUser.SelectedMovieIds = selectedMovies.Select(m => m.Id).ToList();
-                    await _dbManager.SaveUserPreferencesAsync(_currentUser);
+                    // Verificar si se solicitó análisis de rendimiento
+                    var performanceAnalysisRequested = selectedMovies.Any(m => m.Id == -1 && m.Title == "PERFORMANCE_ANALYSIS");
                     
-                    // Generar recomendaciones
-                    await GenerateRecommendationsAsync(selectedMovies);
+                    if (performanceAnalysisRequested)
+                    {
+                        // Remover el marcador de análisis de rendimiento
+                        selectedMovies = selectedMovies.Where(m => m.Id != -1).ToList();
+                        
+                        // Ejecutar análisis de rendimiento
+                        await RunPerformanceAnalysisAsync(selectedMovies);
+                    }
+                    else
+                    {
+                        // Actualizar preferencias del usuario
+                        _currentUser.SelectedMovies = selectedMovies;
+                        _currentUser.SelectedMovieIds = selectedMovies.Select(m => m.Id).ToList();
+                        await _dbManager.SaveUserPreferencesAsync(_currentUser);
+                        
+                        // Generar recomendaciones
+                        await GenerateRecommendationsAsync(selectedMovies);
+                    }
                     
                     // Preguntar si continuar
                     continueRunning = _ui.AskForRestart();
@@ -121,8 +136,63 @@ namespace NetflixRecommendationSystem
             
             // Mostrar métricas de rendimiento
             _ui.ShowPerformanceMetrics(metrics);
-            
             _ui.ShowMessage("✅ Análisis de recomendaciones completado exitosamente.", ConsoleColor.Green);
+        }
+
+        private static async Task RunPerformanceAnalysisAsync(List<Movie> selectedMovies)
+        {
+            Console.Clear();
+            _ui.ShowWelcome();
+            
+            Console.WriteLine("\n🚀 INICIANDO ANÁLISIS DE RENDIMIENTO");
+            Console.WriteLine("═══════════════════════════════════════════════════════════════");
+            Console.WriteLine("Este análisis comparará el rendimiento entre:");
+            Console.WriteLine("• Versión SECUENCIAL (un algoritmo a la vez)");
+            Console.WriteLine("• Versión PARALELA con DESCOMPOSICIÓN ESPECULATIVA");
+            Console.WriteLine("\nLas métricas incluyen: Speedup, Eficiencia y Tiempo de ejecución");
+            Console.WriteLine("═══════════════════════════════════════════════════════════════");
+            
+            Console.WriteLine("\nPresiona cualquier tecla para comenzar el análisis...");
+            Console.ReadKey();
+            
+            try
+            {
+                // Crear calculadora de speedup
+                var speedupCalculator = new SpeedupCalculator(_allMovies, selectedMovies);
+                
+                // Ejecutar análisis de speedup
+                var results = await speedupCalculator.CalculateSpeedupAsync();
+                
+                // Mostrar análisis adicional
+                Console.WriteLine("\n🔬 ANÁLISIS DETALLADO");
+                Console.WriteLine("═══════════════════════════════════════════════════════════════");
+                
+                var bestResult = results.OrderByDescending(r => r.Speedup).First();
+                var worstResult = results.OrderBy(r => r.Speedup).First();
+                
+                Console.WriteLine($"🎯 RECOMENDACIONES:");
+                Console.WriteLine($"   • Configuración óptima: {bestResult.ThreadCount} threads");
+                Console.WriteLine($"   • Speedup máximo: {bestResult.Speedup:F2}x");
+                Console.WriteLine($"   • Eficiencia máxima: {bestResult.Efficiency:P1}");
+                
+                if (bestResult.Efficiency < 0.8)
+                {
+                    Console.WriteLine("\n⚠️  OBSERVACIONES:");
+                    Console.WriteLine("   • La eficiencia es baja, posiblemente por overhead de paralelización");
+                    Console.WriteLine("   • Para datasets pequeños, la versión secuencial podría ser mejor");
+                }
+                
+                Console.WriteLine("\n🧪 DESCOMPOSICIÓN ESPECULATIVA:");
+                Console.WriteLine("   • Esta técnica permite cancelar tareas no necesarias");
+                Console.WriteLine("   • Útil cuando solo necesitas el primer resultado válido");
+                Console.WriteLine("   • Reduce el tiempo total de espera en escenarios reales");
+                
+                _ui.ShowMessage("\n✅ Análisis de rendimiento completado.", ConsoleColor.Green);
+            }
+            catch (Exception ex)
+            {
+                _ui.ShowMessage($"❌ Error durante el análisis de rendimiento: {ex.Message}", ConsoleColor.Red);
+            }
         }
     }
 }

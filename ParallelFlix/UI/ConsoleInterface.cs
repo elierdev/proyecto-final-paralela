@@ -68,6 +68,7 @@ namespace NetflixRecommendationSystem.UI
                 Console.WriteLine("   • [N] - Siguiente página");
                 Console.WriteLine("   • [P] - Página anterior");
                 Console.WriteLine("   • [R] - Obtener recomendaciones");
+                Console.WriteLine("   • [A] - Análisis de rendimiento (Speedup/Eficiencia)");
                 Console.WriteLine("   • [Q] - Salir");
                 
                 Console.Write("\n➤ Selección: ");
@@ -89,6 +90,15 @@ namespace NetflixRecommendationSystem.UI
                             ShowMessage("⚠️  Selecciona al menos una película para obtener recomendaciones.", ConsoleColor.Yellow);
                             continue;
                         }
+                        return selectedMovies;
+                    case "A":
+                        if (selectedMovies.Count == 0)
+                        {
+                            ShowMessage("⚠️  Selecciona al menos una película para realizar análisis de rendimiento.", ConsoleColor.Yellow);
+                            continue;
+                        }
+                        // Marcar que se solicitó análisis de rendimiento
+                        selectedMovies.Add(new Movie { Id = -1, Title = "PERFORMANCE_ANALYSIS" });
                         return selectedMovies;
                     case "Q":
                         Environment.Exit(0);
